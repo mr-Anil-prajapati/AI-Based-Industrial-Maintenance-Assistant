@@ -116,10 +116,16 @@ The repository includes [`.github/workflows/windows-release.yml`](/workspaces/AI
 Once release assets are published, users can download the latest installer via:
 
 ```text
-https://github.com/USERNAME/industrial-ai-assistant/releases/latest/download/Industrial-AI-Assistant-Setup.exe
+https://github.com/mr-Anil-prajapati/AI-Based-Industrial-Maintenance-Assistant/releases/latest/download/Industrial-AI-Assistant-Setup.exe
 ```
 
 This follows GitHub’s documented `releases/latest/download/<asset>` pattern: https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases
+
+Important:
+
+- if no GitHub Release exists yet, the link returns `404`
+- if the release exists but `Industrial-AI-Assistant-Setup.exe` is not attached, the link also returns `404`
+- after you publish a release and attach that exact filename, the link will download the latest installer
 
 ## Development and API Mode
 
