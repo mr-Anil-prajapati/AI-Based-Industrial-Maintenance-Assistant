@@ -1,0 +1,30 @@
+MOCK_SIGNALS = {
+    "motor-1": {
+        "run_feedback": False,
+        "start_command": True,
+        "safety_interlock_ok": False,
+        "overload_trip": False,
+        "emergency_stop": False,
+        "temperature_c": 64.0,
+        "alarm_bits": ["MTR01_INTERLOCK"],
+    },
+    "compressor-1": {
+        "run_feedback": True,
+        "start_command": True,
+        "safety_interlock_ok": True,
+        "overload_trip": False,
+        "emergency_stop": False,
+        "temperature_c": 98.5,
+        "high_temp_alarm": True,
+        "alarm_bits": ["CMP01_HIGH_TEMP"],
+    },
+    "conveyor-1": {
+        "run_feedback": False,
+        "start_command": True,
+        "safety_interlock_ok": True,
+        "overload_trip": True,
+        "emergency_stop": False,
+        "jam_detected": True,
+        "alarm_bits": ["CV01_OVERLOAD", "CV01_JAM"],
+    },
+}

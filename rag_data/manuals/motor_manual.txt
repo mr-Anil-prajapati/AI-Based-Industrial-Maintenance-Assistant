@@ -1,0 +1,18 @@
+Motor-1 Maintenance Manual
+
+Normal motor start sequence:
+- Operator start command active
+- Safety interlock permissive true
+- Overload relay healthy
+- Contactor energizes
+- Run feedback confirms motor rotation
+
+If the motor does not run with a valid start command:
+1. Check emergency stop and safety gate circuits.
+2. Verify overload relay status and reset procedure.
+3. Confirm control voltage to the motor starter.
+4. Compare start command with run feedback in the PLC.
+
+Best practice:
+- Document troubleshooting actions under ISO 9001 quality procedures.
+- Keep fault finding read-only until lockout and maintenance steps are approved.

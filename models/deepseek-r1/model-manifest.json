@@ -1,0 +1,7 @@
+{
+  "model_name": "deepseek-r1:8b",
+  "runtime": "llama.cpp",
+  "expected_file": "deepseek-r1-8b-q4.gguf",
+  "offline_required": true,
+  "bundled_in_installer": true
+}

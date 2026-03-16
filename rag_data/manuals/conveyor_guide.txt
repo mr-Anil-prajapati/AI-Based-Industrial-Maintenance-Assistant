@@ -1,0 +1,12 @@
+Conveyor Service Notes
+
+Common reasons for conveyor stoppage:
+- Material jam at transfer point
+- Motor overload trip
+- Belt misalignment
+- Downstream permissive missing
+
+Diagnostic pattern:
+- Start command true and run feedback false usually indicates a trip or permissive issue.
+- Jam detection active should trigger physical inspection of chute and rollers.
+- Repeated overload alarms may indicate binding or excess load.

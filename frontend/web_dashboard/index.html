@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Industrial AI Maintenance Assistant</title>
+  <style>
+    :root {
+      --bg: #eef2e8;
+      --panel: rgba(255, 255, 255, 0.92);
+      --text: #1e2a1f;
+      --muted: #5b6758;
+      --accent: #275d38;
+      --accent-2: #c67a2b;
+      --border: rgba(39, 93, 56, 0.18);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(198, 122, 43, 0.18), transparent 24%),
+        linear-gradient(135deg, #dce7d3 0%, #eef2e8 40%, #f7f3ea 100%);
+      min-height: 100vh;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 24px;
+      padding: 24px;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: 0 14px 40px rgba(35, 55, 37, 0.08);
+      padding: 20px;
+      backdrop-filter: blur(14px);
+    }
+    h1, h2 { margin-top: 0; }
+    textarea, input, select, button {
+      width: 100%;
+      font: inherit;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 12px;
+      margin-top: 10px;
+    }
+    button {
+      background: var(--accent);
+      color: white;
+      cursor: pointer;
+      border: none;
+      font-weight: 600;
+    }
+    button.secondary { background: var(--accent-2); }
+    .response, .signals {
+      white-space: pre-wrap;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      background: rgba(39, 93, 56, 0.08);
+      border-radius: 999px;
+      font-size: 12px;
+      margin-right: 8px;
+    }
+    @media (max-width: 920px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <section class="panel">
+      <h1>Industrial AI Maintenance Assistant</h1>
+      <div class="badge">Read-only PLC safety mode</div>
+      <div class="badge">Offline-capable with Ollama</div>
+      <p>Use the assistant to compare PLC feedback, alarm bits, and maintenance documents. It provides troubleshooting guidance only.</p>
+      <label for="asset">Asset</label>
+      <select id="asset">
+        <option value="motor-1">Motor-1</option>
+        <option value="compressor-1">Compressor-1</option>
+        <option value="conveyor-1">Conveyor-1</option>
+      </select>
+      <label for="protocol">Protocol</label>
+      <select id="protocol">
+        <option value="opcua">OPC UA</option>
+        <option value="modbus">Modbus TCP</option>
+        <option value="mqtt">MQTT</option>
+        <option value="rest">REST Gateway</option>
+      </select>
+      <label for="question">Question</label>
+      <textarea id="question" rows="5">Why is Motor-1 not running?</textarea>
+      <button id="ask">Analyze Issue</button>
+      <button id="ingest" class="secondary">Ingest Sample Documents</button>
+      <label for="documents">Import documents</label>
+      <input id="documents" type="file" multiple accept=".txt,.md,.pdf,.docx" />
+      <button id="upload" class="secondary">Upload and Index</button>
+    </section>
+    <section class="panel">
+      <h2>Assistant Output</h2>
+      <div id="response" class="response">Run document ingestion first, then ask a troubleshooting question.</div>
+      <h2>PLC Snapshot</h2>
+      <div id="signals" class="signals">No signal snapshot loaded yet.</div>
+    </section>
+  </div>
+
+  <script>
+    const responseEl = document.getElementById("response");
+    const signalsEl = document.getElementById("signals");
+
+    async function refreshSignals() {
+      const asset = document.getElementById("asset").value;
+      const protocol = document.getElementById("protocol").value;
+      const res = await fetch(`/api/signals/${protocol}/${asset}`);
+      const data = await res.json();
+      signalsEl.textContent = JSON.stringify(data, null, 2);
+    }
+
+    document.getElementById("ingest").addEventListener("click", async () => {
+      responseEl.textContent = "Indexing sample manuals and alarm tables...";
+      const res = await fetch("/api/ingest", { method: "POST" });
+      const data = await res.json();
+      responseEl.textContent = `Indexed ${data.documents_indexed} documents and ${data.chunks_indexed} chunks.`;
+      refreshSignals();
+    });
+
+    document.getElementById("ask").addEventListener("click", async () => {
+      const payload = {
+        question: document.getElementById("question").value,
+        asset_id: document.getElementById("asset").value,
+        protocol: document.getElementById("protocol").value
+      };
+      responseEl.textContent = "Running machine analysis and RAG retrieval...";
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      responseEl.textContent = `${data.answer}\n\nMachine state:\n${JSON.stringify(data.machine_state, null, 2)}\n\nSources:\n${JSON.stringify(data.sources, null, 2)}\n\nSafety:\n${data.safety_notice}`;
+      refreshSignals();
+    });
+
+    document.getElementById("upload").addEventListener("click", async () => {
+      const files = document.getElementById("documents").files;
+      if (!files.length) {
+        responseEl.textContent = "Select one or more documents first.";
+        return;
+      }
+      const formData = new FormData();
+      for (const file of files) {
+        formData.append("files", file);
+      }
+      responseEl.textContent = "Uploading and indexing documents...";
+      const res = await fetch("/api/ingest/upload", {
+        method: "POST",
+        body: formData
+      });
+      const data = await res.json();
+      responseEl.textContent = `Uploaded: ${data.filenames.join(", ")}\nIndexed ${data.documents_indexed} documents and ${data.chunks_indexed} chunks.`;
+    });
+
+    refreshSignals();
+  </script>
+</body>
+</html>

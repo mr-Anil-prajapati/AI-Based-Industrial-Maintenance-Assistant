@@ -1,0 +1,17 @@
+Compressor Troubleshooting Guide
+
+High compressor temperature may be caused by:
+- Blocked cooling air path
+- Dirty cooler fins
+- High ambient temperature
+- Excessive discharge pressure
+- Lubrication problems
+
+Recommended checks:
+1. Inspect fan operation and airflow.
+2. Clean heat exchanger surfaces.
+3. Review suction and discharge pressure trends.
+4. Check oil level and maintenance schedule.
+
+Safety reference:
+- ISO 12100 hazard reduction requires manual verification before maintenance intervention.

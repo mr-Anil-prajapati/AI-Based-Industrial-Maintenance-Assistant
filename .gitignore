@@ -1,0 +1,9 @@
+.data/
+.pytest_cache/
+__pycache__/
+*.pyc
+.venv/
+.venv-windows/
+.vscode/
+dist/
+build/installer/

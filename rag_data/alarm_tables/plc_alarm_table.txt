@@ -1,0 +1,17 @@
+PLC Alarm Table
+
+MTR01_INTERLOCK:
+Description: Motor-1 safety interlock open.
+Expected action: Inspect guard switch chain, overload auxiliary contact, and start permissives.
+
+CMP01_HIGH_TEMP:
+Description: Compressor-1 temperature above high threshold.
+Expected action: Inspect cooling system, filters, airflow, and pressure conditions.
+
+CV01_OVERLOAD:
+Description: Conveyor-1 overload trip.
+Expected action: Check for mechanical binding, excess material load, and motor current.
+
+CV01_JAM:
+Description: Conveyor-1 jam detected.
+Expected action: Inspect transfer zone and remove blockage under approved safety procedure.
